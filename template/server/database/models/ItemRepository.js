@@ -4,16 +4,16 @@ class ItemRepository extends AbstractRepository {
   constructor() {
     // Call the constructor of the parent class (AbstractRepository)
     // and pass the table name "item" as configuration
-    super({ table: "item" });
+    super({ table: "Item" });
   }
 
   // The C of CRUD - Create operation
 
-  async create(item) {
+  async createItem({ title, user_id }) {
     // Execute the SQL INSERT query to add a new item to the "item" table
     const [result] = await this.database.query(
-      `insert into ${this.table} (title, user_id) values (?, ?)`,
-      [item.title, item.user_id]
+      `INSERT INTO ${this.table} (title, user_id) VALUES (?, ?)`,
+      [title, user_id]
     );
 
     // Return the ID of the newly inserted item
@@ -22,38 +22,50 @@ class ItemRepository extends AbstractRepository {
 
   // The Rs of CRUD - Read operations
 
-  async read(id) {
+  async readItem(id) {
     // Execute the SQL SELECT query to retrieve a specific item by its ID
-    const [rows] = await this.database.query(
-      `select * from ${this.table} where id = ?`,
+    const [items] = await this.database.query(
+      `SELECT * FROM ${this.table} WHERE id = ?`,
       [id]
     );
 
     // Return the first row of the result, which represents the item
-    return rows[0];
+    return items[0];
   }
 
-  async readAll() {
+  async readAllItems() {
     // Execute the SQL SELECT query to retrieve all items from the "item" table
-    const [rows] = await this.database.query(`select * from ${this.table}`);
+    const [items] = await this.database.query(`SELECT * FROM ${this.table}`);
 
     // Return the array of items
-    return rows;
+    return items;
   }
 
   // The U of CRUD - Update operation
-  // TODO: Implement the update operation to modify an existing item
 
-  // async update(item) {
-  //   ...
-  // }
+  async updateItem(id, { title, user_id }) {
+    // Execute the SQL UPDATE query to modify an item in the "item" table
+    const [result] = await this.database.query(
+      `UPDATE ${this.table} SET title = ?, user_id = ? WHERE id = ?`,
+      [title, user_id, id]
+    );
+
+    // Return true if the item was updated successfully, false otherwise
+    return result.affectedRows > 0;
+  }
 
   // The D of CRUD - Delete operation
-  // TODO: Implement the delete operation to remove an item by its ID
 
-  // async delete(id) {
-  //   ...
-  // }
+  async deleteItem(id) {
+    // Execute the SQL DELETE query to remove an item from the "item" table
+    const [result] = await this.database.query(
+      `DELETE FROM ${this.table} WHERE id = ?`,
+      [id]
+    );
+
+    // Return true if the item was deleted successfully, false otherwise
+    return result.affectedRows > 0;
+  }
 }
 
 module.exports = ItemRepository;

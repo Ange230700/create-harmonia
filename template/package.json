@@ -2,7 +2,7 @@
   "name": "harmonia",
   "version": "0.0.1",
   "private": true,
-  "description": "",
+  "description": "It is just a template for my projects.",
   "homepage": "https://github.com/WildCodeSchool/harmonia#readme",
   "bugs": {
     "url": "https://github.com/WildCodeSchool/harmonia/issues"
@@ -12,8 +12,8 @@
     "url": "git+https://github.com/WildCodeSchool/harmonia.git"
   },
   "workspaces": [
-    "client",
-    "server"
+    "server",
+    "client"
   ],
   "scripts": {
     "postinstall": "husky install || true",
@@ -23,8 +23,14 @@
     "dev:client": "npm run dev --workspace=client",
     "dev:server": "npm run dev --workspace=server",
     "lint": "lint-staged",
+    "prebuild": "npm install",
+    "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "clean": "cross-env-shell \"rm -rf ./client/node_modules ./server/node_modules ./node_modules ./package-lock.json\""
+    "clean": "cross-env-shell \"rm -rf ./client/node_modules ./server/node_modules ./node_modules ./package-lock.json\"",
+    "prettier": "npm run prettier --workspaces --if-present",
+    "linters": "npm run lint --workspaces --if-present",
+    "start": "npm run prettier && npm run linters && npm run build && npm run test && npm run dev",
+    "commit": "git add . && git commit -m \"Sprint 00: {{sprint title}} — Task 00: {{task title}}\""
   },
   "keywords": [],
   "author": "WildCodeSchool",

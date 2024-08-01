@@ -1,12 +1,23 @@
-create table user (
-  id int unsigned primary key auto_increment not null,
-  email varchar(255) not null unique,
-  password varchar(255) not null
-);
+-- $ Conceptual data model
+-- § Relationship between users and items
+-- A user can have many items and an item belongs to a user. (many-to-one, foreign key in the item table)
+DROP DATABASE IF EXISTS `User`;
 
-create table item (
-  id int unsigned primary key auto_increment not null,
-  title varchar(255) not null,
-  user_id int unsigned not null,
-  foreign key(user_id) references user(id)
-);
+DROP DATABASE IF EXISTS `Item`;
+
+CREATE TABLE
+  `User` (
+    `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    `email` VARCHAR(255) NOT NULL UNIQUE,
+    `password` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+  );
+
+CREATE TABLE
+  `Item` (
+    `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `user_id` INT UNSIGNED NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_user_id` FOREIGN KEY (`user_id`) REFERENCES `User` (`id`) ON DELETE CASCADE
+  );

@@ -1,5 +1,5 @@
 {
-  "name": "@harmonia/server",
+  "name": "@{{name}}/server",
   "scripts": {
     "dev": "nodemon --ignore ./database/fixtures index.js",
     "db:migrate": "node ./bin/migrate.js",

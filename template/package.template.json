@@ -2,16 +2,16 @@
   "name": "{{name}}",
   "version": "0.0.1",
   "private": true,
-  "description": "",
-  "homepage": "https://github.com/WildCodeSchool/{{name}}#readme",
+  "description": "It is just a template for my projects.",
+  "homepage": "https://github.com/{{github_username}}/{{name}}#readme",
   "bugs": {
-    "url": "https://github.com/WildCodeSchool/{{name}}/issues"
+    "url": "https://github.com/{{github_username}}/{{name}}/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/WildCodeSchool/{{name}}.git"
+    "url": "git+https://github.com/{{github_username}}/{{name}}.git"
   },
-  "workspaces": ["client", "server"],
+  "workspaces": ["server", "client"],
   "scripts": {
     "postinstall": "husky install || true",
     "db:migrate": "npm run db:migrate --workspace=server",
@@ -20,11 +20,17 @@
     "dev:client": "npm run dev --workspace=client",
     "dev:server": "npm run dev --workspace=server",
     "lint": "lint-staged",
+    "prebuild": "npm install",
+    "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "clean": "cross-env-shell \"rm -rf ./client/node_modules ./server/node_modules ./node_modules ./package-lock.json\""
+    "clean": "cross-env-shell \"rm -rf ./client/node_modules ./server/node_modules ./node_modules ./package-lock.json\"",
+    "prettier": "npm run prettier --workspaces --if-present",
+    "linters": "npm run lint --workspaces --if-present",
+    "start": "npm run prettier && npm run linters && npm run build && npm run test && npm run dev",
+    "commit": "git add . && git commit -m \"Sprint 00: {{sprint title}} — Task 00: {{task title}}\""
   },
   "keywords": [],
-  "author": "WildCodeSchool",
+  "author": "{{author_name}}",
   "license": "MIT",
   "devDependencies": {
     "@commitlint/cli": "^19.2.2",

@@ -2,13 +2,13 @@
 const tables = require("../../database/tables");
 
 // The B of BREAD - Browse (Read All) operation
-const browseItems = async (request, response, next) => {
+const browseUsers = async (request, response, next) => {
   try {
     // Fetch all items from the database
-    const items = await tables.Item.readAllItems();
+    const users = await tables.User.readAllUsers();
 
     // Respond with the items in JSON format
-    response.status(200).json(items);
+    response.status(200).json(users);
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
@@ -16,17 +16,17 @@ const browseItems = async (request, response, next) => {
 };
 
 // The R of BREAD - Read operation
-const readItem = async (request, response, next) => {
+const readUser = async (request, response, next) => {
   try {
     // Fetch a specific item from the database based on the provided ID
-    const item = await tables.Item.readItem(request.params.id);
+    const user = await tables.User.readUser(request.params.id);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with the item in JSON format
-    if (!item) {
-      response.status(404).json({ message: "Item not found" });
+    if (!user) {
+      response.status(404).json({ message: "User not found" });
     } else {
-      response.json(item);
+      response.json(user);
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -35,20 +35,20 @@ const readItem = async (request, response, next) => {
 };
 
 // The E of BREAD - Edit (Update) operation
-const editItem = async (request, response, next) => {
+const editUser = async (request, response, next) => {
   // Extract the item data from the request body
-  const item = request.body;
+  const user = request.body;
 
   try {
     // Update the item in the database based on the provided ID
-    const updated = await tables.Item.updateItem(request.params.id, item);
+    const updated = await tables.User.updateUser(request.params.id, user);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
     if (updated) {
       response.status(204);
     } else {
-      response.status(404).json({ message: "Item not found" });
+      response.status(404).json({ message: "User not found" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -57,34 +57,34 @@ const editItem = async (request, response, next) => {
 };
 
 // The A of BREAD - Add (Create) operation
-const addItem = async (request, response, next) => {
+const addUser = async (request, response, next) => {
   // Extract the item data from the request body
-  const item = request.body;
+  const user = request.body;
 
   try {
-    // Insert the item into the database
-    const insertId = await tables.Item.createItem(item);
+    // Add the item to the database
+    const added = await tables.User.createUser(user);
 
-    // Respond with HTTP 201 (Created) and the ID of the newly inserted item
-    response.status(201).json({ insertId });
+    // Respond with the added item in JSON format
+    response.status(201).json(added);
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
   }
 };
 
-// The D of BREAD - Destroy (Delete) operation
-const destroyItem = async (request, response, next) => {
+// The D of BREAD - Delete operation
+const destroyUser = async (request, response, next) => {
   try {
     // Delete the item from the database based on the provided ID
-    const deleted = await tables.Item.deleteItem(request.params.id);
+    const deleted = await tables.User.deleteUser(request.params.id);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
     if (deleted) {
       response.status(204);
     } else {
-      response.status(404).json({ message: "Item not found" });
+      response.status(404).json({ message: "User not found" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -92,11 +92,11 @@ const destroyItem = async (request, response, next) => {
   }
 };
 
-// Ready to export the controller functions
+// Export the user-related actions
 module.exports = {
-  browseItems,
-  readItem,
-  editItem,
-  addItem,
-  destroyItem,
+  browseUsers,
+  readUser,
+  editUser,
+  addUser,
+  destroyUser,
 };
