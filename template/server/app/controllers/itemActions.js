@@ -8,7 +8,11 @@ const browseItems = async (request, response, next) => {
     const items = await tables.Item.readAllItems();
 
     // Respond with the items in JSON format
-    response.status(200).json(items);
+    if (items.length === 0) {
+      response.status(404).json({ message: "No items found" });
+    } else {
+      response.status(200).json(items);
+    }
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
@@ -26,7 +30,7 @@ const readItem = async (request, response, next) => {
     if (!item) {
       response.status(404).json({ message: "Item not found" });
     } else {
-      response.json(item);
+      response.status(200).json(item);
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -41,14 +45,14 @@ const editItem = async (request, response, next) => {
 
   try {
     // Update the item in the database based on the provided ID
-    const updated = await tables.Item.updateItem(request.params.id, item);
+    const affectedRows = await tables.Item.updateItem(request.params.id, item);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
-    if (updated) {
-      response.status(204);
-    } else {
+    if (!affectedRows) {
       response.status(404).json({ message: "Item not found" });
+    } else {
+      response.status(200).json({ message: "Item updated successfully" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -66,7 +70,13 @@ const addItem = async (request, response, next) => {
     const insertId = await tables.Item.createItem(item);
 
     // Respond with HTTP 201 (Created) and the ID of the newly inserted item
-    response.status(201).json({ insertId });
+    if (!insertId) {
+      response.status(400).json({ message: "Item not added" });
+    } else {
+      response
+        .status(201)
+        .json({ message: "Item added successfully", id: insertId });
+    }
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
@@ -77,14 +87,14 @@ const addItem = async (request, response, next) => {
 const destroyItem = async (request, response, next) => {
   try {
     // Delete the item from the database based on the provided ID
-    const deleted = await tables.Item.deleteItem(request.params.id);
+    const affectedRows = await tables.Item.deleteItem(request.params.id);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
-    if (deleted) {
-      response.status(204);
-    } else {
+    if (!affectedRows) {
       response.status(404).json({ message: "Item not found" });
+    } else {
+      response.status(200).json({ message: "Item deleted successfully" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware

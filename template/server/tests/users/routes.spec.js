@@ -3,19 +3,35 @@ const { app, request, database } = require("../config");
 
 // Test suite for the GET /api/users/all route
 describe("GET /api/users/all", () => {
-  it("should fetch users successfully", async () => {
+  it("should fetch all users successfully", async () => {
+    // Mock users returned from the database
+    const users = [{}];
+
+    // Mock the implementation of the database query method
+    jest.spyOn(database, "query").mockImplementation(() => [users]);
+
+    // Send a GET request to the /api/users endpoint
+    const response = await request(app).get("/api/users/all");
+
+    // Assertions
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual(users);
+  });
+
+  it("should return 404 for no users found", async () => {
     // Mock empty users returned from the database
     const users = [];
 
     // Mock the implementation of the database query method
     jest.spyOn(database, "query").mockImplementation(() => [users]);
 
-    // Send a GET request to the /api/users/all endpoint
+    // Send a GET request to the /api/users endpoint
     const response = await request(app).get("/api/users/all");
 
     // Assertions
-    expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual(users);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("No users found");
   });
 });
 
@@ -85,6 +101,27 @@ describe("PUT /api/users/user/:id", () => {
     expect(response.status).toBe(404);
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("User not found");
+  });
+});
+
+// Test suite for the POST /api/users/user route
+describe("POST /api/users/user", () => {
+  it("should add a new user successfully", async () => {
+    // Mock the result of the database query
+    const result = [{ insertId: 11 }];
+
+    // Mock the implementation of the database query method
+    jest.spyOn(database, "query").mockImplementation(() => result);
+
+    // Send a POST request to the /api/users endpoint
+    const response = await request(app).post("/api/users/user");
+
+    // Assertions
+    expect(response.status).toBe(201);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("User added successfully");
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.id).toBe(11);
   });
 });
 

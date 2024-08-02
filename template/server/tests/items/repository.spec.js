@@ -22,7 +22,7 @@ describe("ItemRepository", () => {
   // Test: Check if createItem method inserts data into the 'Item' table
   test("createItem => INSERT INTO", async () => {
     // Mock result of the database query
-    const result = [{ insertId: 1 }];
+    const result = [{ insertId: 12 }];
 
     // Mock the implementation of the database query method
     jest.spyOn(database, "query").mockImplementation(() => [result]);
@@ -62,8 +62,8 @@ describe("ItemRepository", () => {
 
   // Test: Check if readAllItems method selects all data from the 'item' table
   test("readAllItems => SELECT", async () => {
-    // Mock empty rows returned from the database
-    const items = [];
+    // Mock rows returned from the database
+    const items = [{}];
 
     // Mock the implementation of the database query method
     jest.spyOn(database, "query").mockImplementation(() => [items]);
@@ -95,7 +95,7 @@ describe("ItemRepository", () => {
       "UPDATE Item SET title = ?, user_id = ? WHERE id = ?",
       [fakeItem.title, fakeItem.user_id, 1]
     );
-    expect(returned).toBe(true);
+    expect(returned).toBe(result.affectedRows);
   });
 
   // Test: Check if deleteItem method removes data from the 'item' table based on id
@@ -114,6 +114,6 @@ describe("ItemRepository", () => {
       "DELETE FROM Item WHERE id = ?",
       [2]
     );
-    expect(returned).toBe(true);
+    expect(returned).toBe(result.affectedRows);
   });
 });

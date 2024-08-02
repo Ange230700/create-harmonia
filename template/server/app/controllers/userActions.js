@@ -8,7 +8,11 @@ const browseUsers = async (request, response, next) => {
     const users = await tables.User.readAllUsers();
 
     // Respond with the items in JSON format
-    response.status(200).json(users);
+    if (users.length === 0) {
+      response.status(404).json({ message: "No users found" });
+    } else {
+      response.status(200).json(users);
+    }
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
@@ -26,7 +30,7 @@ const readUser = async (request, response, next) => {
     if (!user) {
       response.status(404).json({ message: "User not found" });
     } else {
-      response.json(user);
+      response.status(200).json(user);
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -41,14 +45,14 @@ const editUser = async (request, response, next) => {
 
   try {
     // Update the item in the database based on the provided ID
-    const updated = await tables.User.updateUser(request.params.id, user);
+    const affectedRows = await tables.User.updateUser(request.params.id, user);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
-    if (updated) {
-      response.status(204);
-    } else {
+    if (!affectedRows) {
       response.status(404).json({ message: "User not found" });
+    } else {
+      response.status(200).json({ message: "User updated successfully" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware
@@ -63,10 +67,16 @@ const addUser = async (request, response, next) => {
 
   try {
     // Add the item to the database
-    const added = await tables.User.createUser(user);
+    const insertId = await tables.User.createUser(user);
 
     // Respond with the added item in JSON format
-    response.status(201).json(added);
+    if (!insertId) {
+      response.status(400).json({ message: "User not added" });
+    } else {
+      response
+        .status(201)
+        .json({ message: "User added successfully", id: insertId });
+    }
   } catch (error) {
     // Pass any errors to the error-handling middleware
     next(error);
@@ -77,14 +87,14 @@ const addUser = async (request, response, next) => {
 const destroyUser = async (request, response, next) => {
   try {
     // Delete the item from the database based on the provided ID
-    const deleted = await tables.User.deleteUser(request.params.id);
+    const affectedRows = await tables.User.deleteUser(request.params.id);
 
     // If the item is not found, respond with HTTP 404 (Not Found)
     // Otherwise, respond with HTTP 204 (No Content)
-    if (deleted) {
-      response.status(204);
-    } else {
+    if (!affectedRows) {
       response.status(404).json({ message: "User not found" });
+    } else {
+      response.status(200).json({ message: "User deleted successfully" });
     }
   } catch (error) {
     // Pass any errors to the error-handling middleware

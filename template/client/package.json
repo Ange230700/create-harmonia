@@ -3,7 +3,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "prebuild": "npm install",
+    "build": "npm run prebuild && vite build",
     "lint": "npx eslint .",
     "prettier": "npx prettier --write .",
     "preview": "vite preview"

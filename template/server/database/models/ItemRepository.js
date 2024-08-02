@@ -51,7 +51,7 @@ class ItemRepository extends AbstractRepository {
     );
 
     // Return true if the item was updated successfully, false otherwise
-    return result.affectedRows > 0;
+    return result.affectedRows;
   }
 
   // The D of CRUD - Delete operation
@@ -64,7 +64,7 @@ class ItemRepository extends AbstractRepository {
     );
 
     // Return true if the item was deleted successfully, false otherwise
-    return result.affectedRows > 0;
+    return result.affectedRows;
   }
 }
 

@@ -5,10 +5,10 @@ class UserRepository extends AbstractRepository {
     super({ table: "User" });
   }
 
-  async createUser({ username, password }) {
+  async createUser({ email, password }) {
     const [result] = await this.database.query(
-      `INSERT INTO ${this.table} (username, password) VALUES (?, ?)`,
-      [username, password]
+      `INSERT INTO ${this.table} (email, password) VALUES (?, ?)`,
+      [email, password]
     );
 
     return result.insertId;
@@ -29,13 +29,13 @@ class UserRepository extends AbstractRepository {
     return users;
   }
 
-  async updateUser(id, { username, password }) {
+  async updateUser(id, { email, password }) {
     const [result] = await this.database.query(
-      `UPDATE ${this.table} SET username = ?, password = ? WHERE id = ?`,
-      [username, password, id]
+      `UPDATE ${this.table} SET email = ?, password = ? WHERE id = ?`,
+      [email, password, id]
     );
 
-    return result.affectedRows > 0;
+    return result.affectedRows;
   }
 
   async deleteUser(id) {
@@ -44,7 +44,7 @@ class UserRepository extends AbstractRepository {
       [id]
     );
 
-    return result.affectedRows > 0;
+    return result.affectedRows;
   }
 }
 

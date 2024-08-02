@@ -144,7 +144,7 @@ app.get("*", (_, response) => {
 const logErrors = (error, request, response, next) => {
   // Log the error to the console for debugging purposes
   console.error(error);
-  console.error("on req:", request.method, request.path);
+  console.error("on request:", request.method, request.path);
 
   // Pass the error to the next middleware in the stack
   next(error);

@@ -4,18 +4,34 @@ const { app, request, database } = require("../config");
 // Test suite for the GET /api/items/all route
 describe("GET /api/items/all", () => {
   it("should fetch items successfully", async () => {
+    // Mock items returned from the database
+    const items = [{}];
+
+    // Mock the implementation of the database query method
+    jest.spyOn(database, "query").mockImplementation(() => [items]);
+
+    // Send a GET request to the /api/items endpoint
+    const response = await request(app).get("/api/items/all");
+
+    // Assertions
+    expect(response.status).toBe(200);
+    expect(response.body).toStrictEqual(items);
+  });
+
+  it("should return 404 for no items found", async () => {
     // Mock empty items returned from the database
     const items = [];
 
     // Mock the implementation of the database query method
     jest.spyOn(database, "query").mockImplementation(() => [items]);
 
-    // Send a GET request to the /api/items/all endpoint
+    // Send a GET request to the /api/items endpoint
     const response = await request(app).get("/api/items/all");
 
     // Assertions
-    expect(response.status).toBe(200);
-    expect(response.body).toStrictEqual(items);
+    expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("No items found");
   });
 });
 
@@ -60,16 +76,15 @@ describe("PUT /api/items/item/:id", () => {
     const result = [{ affectedRows: 1 }];
 
     // Mock the implementation of the database query method
-    jest.spyOn(database, "query").mockImplementation(() => [result]);
-
-    // Fake item data
-    const fakeItem = { title: "foo2", user_id: 1 };
+    jest.spyOn(database, "query").mockImplementation(() => result);
 
     // Send a PUT request to the /api/items/:id endpoint with a test item
-    const response = await request(app).put("/api/items/item/1").send(fakeItem);
+    const response = await request(app).put("/api/items/item/1");
 
     // Assertions
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Item updated successfully");
   });
 
   it("should return 404 for non-existent item", async () => {
@@ -77,16 +92,15 @@ describe("PUT /api/items/item/:id", () => {
     const result = [{ affectedRows: 0 }];
 
     // Mock the implementation of the database query method
-    jest.spyOn(database, "query").mockImplementation(() => [result]);
-
-    // Fake item data
-    const fakeItem = { title: "foo", user_id: 1 };
+    jest.spyOn(database, "query").mockImplementation(() => result);
 
     // Send a PUT request to the /api/items/:id endpoint with a test item
-    const response = await request(app).put("/api/items/item/0").send(fakeItem);
+    const response = await request(app).put("/api/items/item/0");
 
     // Assertions
     expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Item not found");
   });
 });
 
@@ -96,21 +110,20 @@ describe("PUT /api/items/item/:id", () => {
 describe("POST /api/items/item", () => {
   it("should add a new item successfully", async () => {
     // Mock result of the database query
-    const result = [{ insertId: 1 }];
+    const result = [{ insertId: 11 }];
 
     // Mock the implementation of the database query method
-    jest.spyOn(database, "query").mockImplementation(() => [result]);
-
-    // Fake item data
-    const fakeItem = { title: "hugh", user_id: 5 };
+    jest.spyOn(database, "query").mockImplementation(() => result);
 
     // Send a POST request to the /api/items endpoint with a test item
-    const response = await request(app).post("/api/items/item").send(fakeItem);
+    const response = await request(app).post("/api/items/item");
 
     // Assertions
     expect(response.status).toBe(201);
-    expect(response.body).toBeInstanceOf(Object);
-    expect(response.body.insertId).toBe(result.insertId);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Item added successfully");
+    expect(response.body).toHaveProperty("id");
+    expect(response.body.id).toBe(11);
   });
 });
 
@@ -121,13 +134,15 @@ describe("DELETE /api/items/item/:id", () => {
     const result = [{ affectedRows: 1 }];
 
     // Mock the implementation of the database query method
-    jest.spyOn(database, "query").mockImplementation(() => [result]);
+    jest.spyOn(database, "query").mockImplementation(() => result);
 
     // Send a DELETE request to the /api/items/:id endpoint
     const response = await request(app).delete("/api/items/item/2");
 
     // Assertions
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(200);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Item deleted successfully");
   });
 
   it("should return 404 for non-existent item", async () => {
@@ -135,12 +150,14 @@ describe("DELETE /api/items/item/:id", () => {
     const result = [{ affectedRows: 0 }];
 
     // Mock the implementation of the database query method
-    jest.spyOn(database, "query").mockImplementation(() => [result]);
+    jest.spyOn(database, "query").mockImplementation(() => result);
 
     // Send a DELETE request to the /api/items/:id endpoint with an invalid ID
     const response = await request(app).delete("/api/items/item/0");
 
     // Assertions
     expect(response.status).toBe(404);
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Item not found");
   });
 });

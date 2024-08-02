@@ -3,7 +3,7 @@
 // Load environment variables from .env file
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "./server/.env" });
+dotenv.config();
 
 // Import the supertest library for making HTTP requests
 const request = require("supertest");
